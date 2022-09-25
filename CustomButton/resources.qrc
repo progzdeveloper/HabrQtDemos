@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="more-horizontal">resources/dots-horizontal.svg</file>
+        <file alias="pencil">resources/pencil.svg</file>
+    </qresource>
+</RCC>

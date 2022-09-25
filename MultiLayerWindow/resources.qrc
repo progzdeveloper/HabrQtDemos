@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="close">resources/close.svg</file>
+        <file alias="save">resources/content-save.svg</file>
+        <file alias="more-horizontal">resources/dots-horizontal.svg</file>
+        <file alias="image">resources/file-image-outline.svg</file>
+        <file alias="pencil">resources/pencil.svg</file>
+        <file alias="trash">resources/trash-can-outline.svg</file>
+        <file alias="settings">resources/cog.svg</file>
+        <file alias="open">resources/folder-open.svg</file>
+        <file alias="brush">resources/brush.svg</file>
+        <file alias="eraser">resources/eraser.svg</file>
+        <file alias="shape">resources/shape.svg</file>
+    </qresource>
+</RCC>
