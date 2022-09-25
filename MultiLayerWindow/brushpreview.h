@@ -19,7 +19,7 @@ Q_SIGNALS:
     void colorChanged(QColor);
 
 protected:
-    void paintEvent(QPaintEvent*);
+    void paintEvent(QPaintEvent*) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent* _event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent* _event) Q_DECL_OVERRIDE;
 
