@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shaders/dual_kawase_down.frag</file>
+        <file>shaders/dual_kawase_up.frag</file>
+        <file>shaders/simple.vert</file>
+    </qresource>
+</RCC>
