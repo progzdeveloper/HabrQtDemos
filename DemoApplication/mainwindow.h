@@ -17,7 +17,7 @@ class MainWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = Q_NULLPTR);
+    explicit MainWindow(QWidget *_parent = Q_NULLPTR);
 
     void openImage();
     void saveImage();
@@ -32,8 +32,10 @@ private:
     void showMessage(const QString& _text);
     void showWarning(const QString& _text);
 
-
 private:
+    QString cachedSaveFolder_;
+    QString cachedLoadFolder_;
+
     BlurBehindEffect* effect_;
     ContentWidget* contentWidget_;
     ControlPanel* controlPanel_;

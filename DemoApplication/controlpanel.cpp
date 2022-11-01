@@ -69,7 +69,6 @@ ControlPanel::ControlPanel(BlurBehindEffect *_effect, QWidget *_parent) : Overla
     layout->addWidget(settingsButton_);
     layout->addWidget(clearButton_);
 
-
     QPalette pal;
     pal.setBrush(QPalette::Window, Qt::black);
     setPalette(pal);
@@ -91,17 +90,15 @@ void ControlPanel::onClearColorChanged(QColor c)
     clearButton_->setBadgeValue(c);
 }
 
-void ControlPanel::paintEvent(QPaintEvent* e)
+void ControlPanel::paintEvent(QPaintEvent* _event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(Qt::black);
     painter.setOpacity(kPanelOpacity);
     painter.setClipPath(cachedPath_);
     painter.fillRect(rect(), palette().window());
 
-    OverlayPanel::paintEvent(e);
+    OverlayPanel::paintEvent(_event);
 }
 
 QPainterPath ControlPanel::clipPath() const

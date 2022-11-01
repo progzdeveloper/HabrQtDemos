@@ -62,9 +62,11 @@ namespace
     };
 }
 
-MainWindow::MainWindow(QWidget *parent)
-    : QWidget(parent)
+MainWindow::MainWindow(QWidget* _parent)
+    : QWidget(_parent)
 {
+    cachedLoadFolder_ = cachedSaveFolder_ = imagesLocation();
+
     contentWidget_ = new ContentWidget(this);
 
     effect_ = new BlurBehindEffect(contentWidget_);
@@ -73,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
     effect_->setBlurRadius(5);
     effect_->setBlurOpacity(0.7);
     effect_->setSourceOpacity(1.0);
-    effect_->setBackgroundBrush(Qt::black);
+    effect_->setBackgroundBrush(Qt::NoBrush);
     effect_->setCoordinateSystem(Qt::DeviceCoordinates);
     contentWidget_->setGraphicsEffect(effect_);
 
@@ -126,7 +128,7 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::openImage()
 {
     warningsLayer_->hide();
-    const QString filePath = QFileDialog::getOpenFileName(this, tr("Load Image"), imagesLocation(), imagesFilter(QImageWriter::supportedImageFormats()));
+    const QString filePath = QFileDialog::getOpenFileName(this, tr("Load Image"), cachedLoadFolder_, imagesFilter(QImageWriter::supportedImageFormats()));
     if (filePath.isEmpty())
         return;
 
@@ -140,6 +142,9 @@ void MainWindow::openImage()
         return;
     }
 
+    QFileInfo fileInfo(filePath);
+    cachedLoadFolder_ = fileInfo.canonicalPath();
+
     contentWidget_->setImage(image);
     const QString elidedPath = QFontMetrics(font()).elidedText(filePath, Qt::ElideMiddle, kMaxPathTextWidth);
     Q_EMIT showMessage(tr("Image '%1' was successfully loaded").arg(elidedPath));
@@ -148,7 +153,7 @@ void MainWindow::openImage()
 void MainWindow::saveImage()
 {
     warningsLayer_->hide();
-    const QString filePath = QFileDialog::getSaveFileName(this, tr("Save Image"), imagesLocation(), imagesFilter(QImageWriter::supportedImageFormats()));
+    const QString filePath = QFileDialog::getSaveFileName(this, tr("Save Image"), cachedSaveFolder_, imagesFilter(QImageWriter::supportedImageFormats()));
     if (filePath.isEmpty())
         return;
 
@@ -160,6 +165,9 @@ void MainWindow::saveImage()
         Q_EMIT showWarning(tr("Failed to save image: %1").arg(writer.errorString()));
         return;
     }
+
+    QFileInfo fileInfo(filePath);
+    cachedSaveFolder_ = fileInfo.canonicalPath();
 
     const QString elidedPath = QFontMetrics(font()).elidedText(filePath, Qt::ElideMiddle, kMaxPathTextWidth);
     Q_EMIT showMessage(tr("Image was successfully saved into '%1'").arg(elidedPath));

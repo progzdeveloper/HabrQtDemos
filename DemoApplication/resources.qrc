@@ -12,4 +12,9 @@
         <file alias="eraser">resources/eraser.svg</file>
         <file alias="shape">resources/shape.svg</file>
     </qresource>
+    <qresource prefix="/">
+        <file>resources/shaders/dual_kawase_down.frag</file>
+        <file>resources/shaders/dual_kawase_up.frag</file>
+        <file>resources/shaders/simple.vert</file>
+    </qresource>
 </RCC>

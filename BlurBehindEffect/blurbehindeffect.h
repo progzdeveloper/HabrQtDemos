@@ -1,4 +1,4 @@
-#pragma  once
+#pragma once
 #include <memory>
 #include <QGraphicsEffect>
 
@@ -22,13 +22,13 @@ public:
     };
     Q_ENUM(BlurMethod)
 
-    BlurBehindEffect(QWidget *parent = Q_NULLPTR);
+    BlurBehindEffect(QWidget *_parent = Q_NULLPTR);
     ~BlurBehindEffect();
 
     void render(QPainter* _painter);
-    void render(QPainter* _painter, const QPainterPath &_clipPath);
+    void render(QPainter* _painter, const QPainterPath& _clipPath);
 
-    void setSourceOpacity(double opacity);
+    void setSourceOpacity(double _opacity);
     double sourceOpacity() const;
 
     void setBlurOpacity(double _opacity);
@@ -40,7 +40,7 @@ public:
     void setBlurMethod(BlurMethod _method);
     BlurMethod blurMethod() const;
 
-    void setRegion(const QRegion& _region);
+    void setRegion(const QRegion& _sourceRegion);
     const QRegion& region() const;
 
     void setBlurRadius(int _radius);

@@ -102,20 +102,16 @@ void PopupPanel::showEvent(QShowEvent *_event)
     QWidget::showEvent(_event);
 }
 
-
 void PopupPanel::paintEvent(QPaintEvent* _event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(palette().window());
     painter.setOpacity(kPanelOpacity);
     painter.setClipPath(cachedPath_);
     painter.fillRect(rect(), palette().window());
 
     OverlayPanel::paintEvent(_event);
 }
-
 
 QPainterPath PopupPanel::clipPath() const
 {

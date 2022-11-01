@@ -30,7 +30,7 @@ Q_SIGNALS:
     void toggleFullScreen();
 
 protected:
-    void paintEvent(QPaintEvent*_event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent* _event) Q_DECL_OVERRIDE;
     QPainterPath clipPath() const Q_DECL_OVERRIDE;
 
 private:

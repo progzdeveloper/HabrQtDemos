@@ -9,187 +9,187 @@
 class BlurBehindEffectPrivate
 {
 public:
-    GLBlurFunctions glBlur;
-    qint64 cacheKey;
-    QImage sourceImage;
-    QImage blurredImage;
-    QRegion region;
-    BlurBehindEffect::BlurMethod blurringMethod;
-    Qt::CoordinateSystem coordSystem;
-    QBrush backgroundBrush;
-    double sourceOpacity;
-    double blurOpacity;
-    double downsamplingFactor;
-    int blurRadius;
-    int maxThreadCount;
-    bool sourceUpdated;
+    GLBlurFunctions glBlur_;
+    qint64 cacheKey_;
+    QImage sourceImage_;
+    QImage blurredImage_;
+    QRegion region_;
+    BlurBehindEffect::BlurMethod blurringMethod_;
+    Qt::CoordinateSystem coordSystem_;
+    QBrush backgroundBrush_;
+    double sourceOpacity_;
+    double blurOpacity_;
+    double downsamplingFactor_;
+    int blurRadius_;
+    int maxThreadCount_;
+    bool sourceUpdated_;
 
     BlurBehindEffectPrivate()
-        : cacheKey(0)
-        , blurringMethod(BlurBehindEffect::BlurMethod::StackBlur)
-        , coordSystem(Qt::LogicalCoordinates)
-        , sourceOpacity(1.0)
-        , blurOpacity(1.0)
-        , downsamplingFactor(2.0)
-        , blurRadius(2)
-        , maxThreadCount(1)
-        , sourceUpdated(true)
+        : cacheKey_(0)
+        , blurringMethod_(BlurBehindEffect::BlurMethod::StackBlur)
+        , coordSystem_(Qt::LogicalCoordinates)
+        , sourceOpacity_(1.0)
+        , blurOpacity_(1.0)
+        , downsamplingFactor_(2.0)
+        , blurRadius_(2)
+        , maxThreadCount_(1)
+        , sourceUpdated_(true)
     {
     }
 
-    QImage blurImage(const QImage &input)
+    QImage blurImage(const QImage &_input)
     {
-        switch(blurringMethod)
+        switch(blurringMethod_)
         {
         case BlurBehindEffect::BlurMethod::BoxBlur:
-            return boxBlurImage(input, blurRadius);
+            return boxBlurImage(_input, blurRadius_);
         case BlurBehindEffect::BlurMethod::StackBlur:
-            return stackBlurImage(input, blurRadius, maxThreadCount);
+            return stackBlurImage(_input, blurRadius_, maxThreadCount_);
         case BlurBehindEffect::BlurMethod::GLBlur:
-            return glBlur.blurImage_DualKawase(input, 2, std::max(blurRadius - 2, 1));
+            return glBlur_.blurImage_DualKawase(_input, 2, std::max(blurRadius_ - 2, 1));
         }
-        return input;
+        return _input;
     }
 
-    QPixmap grabSource(QWidget* widget) const
+    QPixmap grabSource(QWidget* _widget) const
     {
-        if (!widget)
+        if (!_widget)
             return QPixmap{};
 
         qreal dpr(1.0);
-        if (const auto *paintDevice = widget)
+        if (const auto *paintDevice = _widget)
             dpr = paintDevice->devicePixelRatioF();
         else
             qWarning("QtBlurBehindEffect::grabSource: Painter not active");
 
-        const bool isGlBlur = blurringMethod == BlurBehindEffect::BlurMethod::GLBlur;
-        QPixmap image(widget->size());
+        const bool isGlBlur = blurringMethod_ == BlurBehindEffect::BlurMethod::GLBlur;
+        QPixmap image(_widget->size());
         image.setDevicePixelRatio(dpr);
-        image.fill(isGlBlur ? widget->palette().color(widget->backgroundRole()) : Qt::transparent);
-        widget->render(&image, {}, {}, QWidget::DrawChildren);
+        image.fill(isGlBlur ? _widget->palette().color(_widget->backgroundRole()) : Qt::transparent);
+        _widget->render(&image, {}, {}, QWidget::DrawChildren);
 
         return image;
     }
 
     void renderImage(QPainter *_painter, const QImage &_image, const QBrush& _brush)
     {
-        if (region.isEmpty() || _image.isNull())
+        if (region_.isEmpty() || _image.isNull())
             return;
 
-        const QRect bounds = region.boundingRect();
+        const QRect bounds = region_.boundingRect();
         const QSize s = bounds.size();
         QRect r(QPoint(0, 0), s);
 
         QTransform transform;
-        if (coordSystem == Qt::LogicalCoordinates)
+        if (coordSystem_ == Qt::LogicalCoordinates)
             transform = _painter->worldTransform();
 
         _painter->setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform);
-        if (coordSystem == Qt::LogicalCoordinates)
+        if (coordSystem_ == Qt::LogicalCoordinates)
             _painter->translate(bounds.topLeft());
 
         if (!_brush.isOpaque() && !_brush.style() == Qt::NoBrush)
             _painter->fillRect(r, _brush);
-        _painter->setOpacity(blurOpacity);
+        _painter->setOpacity(blurOpacity_);
         _painter->drawImage(r, _image);
 
-        if (coordSystem == Qt::LogicalCoordinates)
+        if (coordSystem_ == Qt::LogicalCoordinates)
             _painter->setWorldTransform(transform);
     }
 };
 
-BlurBehindEffect::BlurBehindEffect(QWidget *parent)
-    : QGraphicsEffect(parent)
+BlurBehindEffect::BlurBehindEffect(QWidget *_parent)
+    : QGraphicsEffect(_parent)
     , d(std::make_unique<BlurBehindEffectPrivate>())
 {
 }
 
 BlurBehindEffect::~BlurBehindEffect() = default;
 
-void BlurBehindEffect::setSourceOpacity(double opacity)
+void BlurBehindEffect::setSourceOpacity(double _opacity)
 {
-    opacity = std::clamp(opacity, 0.0, 1.0);
-    if (d->sourceOpacity == opacity)
+    _opacity = std::clamp(_opacity, 0.0, 1.0);
+    if (d->sourceOpacity_ == _opacity)
         return;
 
-    d->sourceOpacity = std::clamp(opacity, 0.0, 1.0);
-    Q_EMIT sourceOpacityChanged(opacity);
+    d->sourceOpacity_ = std::clamp(_opacity, 0.0, 1.0);
+    Q_EMIT sourceOpacityChanged(_opacity);
     Q_EMIT repaintRequired();
     update();
 }
 
 double BlurBehindEffect::sourceOpacity() const
 {
-    return d->sourceOpacity;
+    return d->sourceOpacity_;
 }
 
-void BlurBehindEffect::setBlurOpacity(double opacity)
+void BlurBehindEffect::setBlurOpacity(double _opacity)
 {
-    opacity = std::clamp(opacity, 0.0, 1.0);
-    if (d->blurOpacity == opacity)
+    _opacity = std::clamp(_opacity, 0.0, 1.0);
+    if (d->blurOpacity_ == _opacity)
         return;
 
-    d->blurOpacity = opacity;
-    Q_EMIT blurOpacityChanged(opacity);
+    d->blurOpacity_ = _opacity;
+    Q_EMIT blurOpacityChanged(_opacity);
     Q_EMIT repaintRequired();
     update();
 }
 
 double BlurBehindEffect::blurOpacity() const
 {
-    return d->blurOpacity;
+    return d->blurOpacity_;
 }
 
-void BlurBehindEffect::setBackgroundBrush(const QBrush &brush)
+void BlurBehindEffect::setBackgroundBrush(const QBrush& _brush)
 {
-    if (d->backgroundBrush == brush)
+    if (d->backgroundBrush_ == _brush)
         return;
 
-    d->backgroundBrush = brush;
+    d->backgroundBrush_ = _brush;
 
-    Q_EMIT backgroundBrushChanged(brush);
+    Q_EMIT backgroundBrushChanged(_brush);
     Q_EMIT repaintRequired();
     update();
 }
 
 QBrush BlurBehindEffect::backgroundBrush() const
 {
-    return d->backgroundBrush;
+    return d->backgroundBrush_;
 }
 
-void BlurBehindEffect::setBlurMethod(BlurBehindEffect::BlurMethod m)
+void BlurBehindEffect::setBlurMethod(BlurBehindEffect::BlurMethod _method)
 {
-    if (d->blurringMethod == m)
+    if (d->blurringMethod_ == _method)
         return;
 
-    d->blurringMethod = m;
+    d->blurringMethod_ = _method;
     Q_EMIT repaintRequired();
     update();
 }
 
 BlurBehindEffect::BlurMethod BlurBehindEffect::blurMethod() const
 {
-    return d->blurringMethod;
+    return d->blurringMethod_;
 }
 
-void BlurBehindEffect::setRegion(const QRegion &r)
+void BlurBehindEffect::setRegion(const QRegion& _sourceRegion)
 {
-    d->region = r;
+    d->region_ = _sourceRegion;
     updateBoundingRect();
 }
 
 const QRegion &BlurBehindEffect::region() const
 {
-    return d->region;
+    return d->region_;
 }
 
-void BlurBehindEffect::setBlurRadius(int radius)
+void BlurBehindEffect::setBlurRadius(int _radius)
 {
-    if (d->blurRadius == radius)
+    if (d->blurRadius_ == _radius)
         return;
 
-    d->blurRadius = radius;
-    Q_EMIT blurRadiusChanged(radius);
+    d->blurRadius_ = _radius;
+    Q_EMIT blurRadiusChanged(_radius);
     Q_EMIT repaintRequired();
 
     updateBoundingRect();
@@ -197,18 +197,18 @@ void BlurBehindEffect::setBlurRadius(int radius)
 
 int BlurBehindEffect::blurRadius() const
 {
-    return d->blurRadius;
+    return d->blurRadius_;
 }
 
-void BlurBehindEffect::setDownsampleFactor(double factor)
+void BlurBehindEffect::setDownsampleFactor(double _factor)
 {
-    factor = std::max(factor, 1.0);
+    _factor = std::max(_factor, 1.0);
 
-    if (d->downsamplingFactor == factor)
+    if (d->downsamplingFactor_ == _factor)
         return;
 
-    d->downsamplingFactor = factor;
-    Q_EMIT downsampleFactorChanged(factor);
+    d->downsamplingFactor_ = _factor;
+    Q_EMIT downsampleFactorChanged(_factor);
     Q_EMIT repaintRequired();
 
     update();
@@ -216,113 +216,113 @@ void BlurBehindEffect::setDownsampleFactor(double factor)
 
 double BlurBehindEffect::downsampleFactor() const
 {
-    return d->downsamplingFactor;
+    return d->downsamplingFactor_;
 }
 
-void BlurBehindEffect::setMaxThreadCount(int nthreads)
+void BlurBehindEffect::setMaxThreadCount(int _nthreads)
 {
-    d->maxThreadCount = std::clamp(nthreads, 1, std::max(QThread::idealThreadCount(), 1));
+    d->maxThreadCount_ = std::clamp(_nthreads, 1, std::max(QThread::idealThreadCount(), 1));
 }
 
 int BlurBehindEffect::maxThreadCount() const
 {
-    return d->maxThreadCount;
+    return d->maxThreadCount_;
 }
 
-void BlurBehindEffect::setCoordinateSystem(Qt::CoordinateSystem system)
+void BlurBehindEffect::setCoordinateSystem(Qt::CoordinateSystem _system)
 {
-    if (d->coordSystem == system)
+    if (d->coordSystem_ == _system)
         return;
 
-    d->coordSystem = system;
+    d->coordSystem_ = _system;
     Q_EMIT repaintRequired();
     update();
 }
 
 Qt::CoordinateSystem BlurBehindEffect::coordinateSystem() const
 {
-    return d->coordSystem;
+    return d->coordSystem_;
 }
 
-void BlurBehindEffect::draw(QPainter *painter)
+void BlurBehindEffect::draw(QPainter* _painter)
 {
     QWidget* w = qobject_cast<QWidget*>(parent());
     if (!w)
         return;
 
-    const QRect bounds = d->region.boundingRect();
+    const QRect bounds = d->region_.boundingRect();
 
     // grap widget source pixmap
     QPixmap pixmap = d->grabSource(w);
     // render source
-    painter->drawPixmap(0, 0, pixmap);
+    _painter->drawPixmap(0, 0, pixmap);
 
-    if (d->sourceOpacity > 0.0 && d->sourceOpacity < 1.0)
+    if (d->sourceOpacity_ > 0.0 && d->sourceOpacity_ < 1.0)
     {
-        if (!d->region.isEmpty() && bounds != w->rect())
-            painter->setClipRegion(QRegion(w->rect()) -= d->region);
-        else if (!d->region.isEmpty())
-            painter->setClipRegion(d->region);
+        if (!d->region_.isEmpty() && bounds != w->rect())
+            _painter->setClipRegion(QRegion(w->rect()) -= d->region_);
+        else if (!d->region_.isEmpty())
+            _painter->setClipRegion(d->region_);
 
-        const double opacity = painter->opacity();
-        painter->setOpacity(d->sourceOpacity);
-        painter->drawPixmap(0, 0, pixmap);
-        painter->setOpacity(opacity);
+        const double opacity = _painter->opacity();
+        _painter->setOpacity(d->sourceOpacity_);
+        _painter->drawPixmap(0, 0, pixmap);
+        _painter->setOpacity(opacity);
     }
 
     // get image blur region and downsample it
-    if (!d->region.isEmpty() && d->blurRadius > 1)
+    if (!d->region_.isEmpty() && d->blurRadius_ > 1)
     {
         const double dpr = pixmap.devicePixelRatioF();
-        const QSize s = (QSizeF(bounds.size()) * (dpr / d->downsamplingFactor)).toSize();
+        const QSize s = (QSizeF(bounds.size()) * (dpr / d->downsamplingFactor_)).toSize();
         QImage pixmapPart = std::move(pixmap.copy(bounds).scaled(s, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).toImage());
-        if (d->sourceImage != pixmapPart)
+        if (d->sourceImage_ != pixmapPart)
         {
-            d->sourceImage = pixmapPart;
-            d->cacheKey = pixmapPart.cacheKey();
-            d->sourceUpdated = true;
+            d->sourceImage_ = pixmapPart;
+            d->cacheKey_ = pixmapPart.cacheKey();
+            d->sourceUpdated_ = true;
         }
     }
 }
 
 void BlurBehindEffect::render(QPainter* _painter)
 {
-    if (blurRadius() <= 1 || d->sourceImage.isNull())
+    if (blurRadius() <= 1 || d->sourceImage_.isNull())
         return;
 
-    if (!d->sourceUpdated)
-        return d->renderImage(_painter, d->blurredImage, d->backgroundBrush);
+    if (!d->sourceUpdated_)
+        return d->renderImage(_painter, d->blurredImage_, d->backgroundBrush_);
 
-    d->blurredImage = std::move(d->blurImage(d->sourceImage));
-    d->renderImage(_painter, d->blurredImage, d->backgroundBrush);
-    d->sourceUpdated = false;
+    d->blurredImage_ = std::move(d->blurImage(d->sourceImage_));
+    d->renderImage(_painter, d->blurredImage_, d->backgroundBrush_);
+    d->sourceUpdated_ = false;
 }
 
 void BlurBehindEffect::render(QPainter* _painter, const QPainterPath& _clipPath)
 {
-    if (blurRadius() <= 1 || d->sourceImage.isNull())
+    if (blurRadius() <= 1 || d->sourceImage_.isNull())
         return;
 
     if (_clipPath.isEmpty())
         return render(_painter);
 
-    const QRect regionRect = d->region.boundingRect();
-    const QRectF targetRect = _clipPath.boundingRect();
+    const QRect regionRect = d->region_.boundingRect();
+    const QRectF targetBounds = _clipPath.boundingRect();
 
-    if (!regionRect.intersects(targetRect.toRect()))
+    if (!regionRect.contains(targetBounds.toRect()))
     {
-        qWarning() << "target painter path is outside of source region";
+        qWarning() << "target path is outside of source region";
         return;
     }
 
-    if (d->sourceUpdated)
+    if (d->sourceUpdated_)
     {
-        d->blurredImage = std::move(d->blurImage(d->sourceImage));
-        d->sourceUpdated = false;
+        d->blurredImage_ = std::move(d->blurImage(d->sourceImage_));
+        d->sourceUpdated_ = false;
     }
 
-    QImage image = d->blurredImage.scaled(regionRect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    _painter->setOpacity(d->blurOpacity);
-    _painter->drawImage(QPointF{}, image, targetRect);
+    QImage image = d->blurredImage_.scaled(regionRect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    _painter->setOpacity(d->blurOpacity_);
+    _painter->drawImage(QPointF{}, image, targetBounds);
 }
 

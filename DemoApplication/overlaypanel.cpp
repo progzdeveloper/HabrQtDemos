@@ -46,7 +46,3 @@ QPainterPath OverlayPanel::clipPath() const
     return path;
 }
 
-QRegion OverlayPanel::effectRegion() const
-{
-    return parentWidget() ? geometry() : rect();
-}
