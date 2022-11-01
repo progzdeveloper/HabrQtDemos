@@ -93,13 +93,6 @@ void ControlPanel::onClearColorChanged(QColor c)
 
 void ControlPanel::paintEvent(QPaintEvent* e)
 {
-    /*QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(Qt::black);
-    painter.setOpacity(kPanelOpacity);
-    painter.drawPath(cachedPath_);*/
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);

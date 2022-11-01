@@ -105,16 +105,6 @@ void PopupPanel::showEvent(QShowEvent *_event)
 
 void PopupPanel::paintEvent(QPaintEvent* _event)
 {
-    /*const QRect r = rect().adjusted(0, 0, -1, -1);
-    QPainter painter(this);
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(palette().window());
-    painter.setOpacity(kPanelOpacity);
-    painter.drawRoundedRect(r, kPanelRadius, kPanelRadius);*/
-
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);
