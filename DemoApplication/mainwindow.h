@@ -17,7 +17,7 @@ class MainWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *_parent = Q_NULLPTR);
+    explicit MainWindow(QWidget* _parent = Q_NULLPTR);
 
     void openImage();
     void saveImage();

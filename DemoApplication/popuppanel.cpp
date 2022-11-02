@@ -22,7 +22,7 @@ namespace
     constexpr qreal kPanelOpacity = 0.8;
 }
 
-PopupPanel::PopupPanel(Category _category, BlurBehindEffect *_effect, QWidget *_parent)
+PopupPanel::PopupPanel(Category _category, BlurBehindEffect* _effect, QWidget* _parent)
     : OverlayPanel(_effect, _parent)
     , timer_(Q_NULLPTR)
     , label_(Q_NULLPTR)
@@ -94,7 +94,7 @@ std::chrono::milliseconds PopupPanel::duration() const
     return std::chrono::milliseconds(timer_->interval());
 }
 
-void PopupPanel::showEvent(QShowEvent *_event)
+void PopupPanel::showEvent(QShowEvent* _event)
 {
     if (timer_->interval() > 0)
         timer_->start();

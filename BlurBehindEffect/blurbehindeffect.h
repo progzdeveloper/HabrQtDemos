@@ -22,7 +22,7 @@ public:
     };
     Q_ENUM(BlurMethod)
 
-    BlurBehindEffect(QWidget *_parent = Q_NULLPTR);
+    BlurBehindEffect(QWidget* _parent = nullptr);
     ~BlurBehindEffect();
 
     void render(QPainter* _painter);

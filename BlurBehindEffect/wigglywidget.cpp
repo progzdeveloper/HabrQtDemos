@@ -1,6 +1,6 @@
 #include "wigglywidget.h"
 
-WigglyWidget::WigglyWidget(QWidget *parent)
+WigglyWidget::WigglyWidget(QWidget* parent)
     : QWidget(parent)
 {
     setBackgroundRole(QPalette::Midlight);
@@ -37,7 +37,7 @@ void WigglyWidget::paintEvent(QPaintEvent * /* event */)
     }
 }
 
-void WigglyWidget::timerEvent(QTimerEvent *event)
+void WigglyWidget::timerEvent(QTimerEvent* event)
 {
     if (event->timerId() == timer.timerId())
     {

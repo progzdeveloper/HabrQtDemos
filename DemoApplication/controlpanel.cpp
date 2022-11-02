@@ -14,7 +14,7 @@ namespace
     constexpr qreal kPanelOpacity = 0.9;
 }
 
-ControlPanel::ControlPanel(BlurBehindEffect *_effect, QWidget *_parent) : OverlayPanel(_effect, _parent)
+ControlPanel::ControlPanel(BlurBehindEffect* _effect, QWidget* _parent) : OverlayPanel(_effect, _parent)
 {
     fileMenuButton_ = new CustomButton(tr("File"), this);
     fileMenuButton_->setMenu(createFileMenu());

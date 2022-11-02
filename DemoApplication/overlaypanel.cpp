@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QBitmap>
 
-OverlayPanel::OverlayPanel(BlurBehindEffect *_effect, QWidget *_parent) : QWidget(_parent), effect_(_effect)
+OverlayPanel::OverlayPanel(BlurBehindEffect* _effect, QWidget* _parent) : QWidget(_parent), effect_(_effect)
 {
     if (effect_)
     {
@@ -14,15 +14,10 @@ OverlayPanel::OverlayPanel(BlurBehindEffect *_effect, QWidget *_parent) : QWidge
     setAttribute(Qt::WA_TranslucentBackground, true);
 }
 
-void OverlayPanel::resizeEvent(QResizeEvent *_event)
+void OverlayPanel::resizeEvent(QResizeEvent* _event)
 {
     QWidget::resizeEvent(_event);
     cachedPath_ = clipPath();
-}
-
-void OverlayPanel::moveEvent(QMoveEvent *_event)
-{
-    QWidget::moveEvent(_event);
 }
 
 void OverlayPanel::paintEvent(QPaintEvent* _event)

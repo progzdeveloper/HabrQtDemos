@@ -11,7 +11,6 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent* _event) Q_DECL_OVERRIDE;
-    void moveEvent(QMoveEvent* _event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent* _event) Q_DECL_OVERRIDE;
 
     virtual QPainterPath clipPath() const;

@@ -98,7 +98,7 @@ public:
     }
 };
 
-BlurBehindEffect::BlurBehindEffect(QWidget *_parent)
+BlurBehindEffect::BlurBehindEffect(QWidget* _parent)
     : QGraphicsEffect(_parent)
     , d(std::make_unique<BlurBehindEffectPrivate>())
 {
