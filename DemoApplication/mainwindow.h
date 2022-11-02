@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "painttool.h"
+#include "../MultiLayerWindow/painttool.h"
 
 class ShapedWidget;
 

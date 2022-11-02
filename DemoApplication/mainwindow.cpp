@@ -1,10 +1,10 @@
 #include "mainwindow.h"
-#include "contentwidget.h"
 #include "controlpanel.h"
 #include "popuppanel.h"
 
+#include "../MultiLayerWindow/contentwidget.h"
 #include "../ShapedWidget/shapedwidget.h"
-#include "blurbehindeffect.h"
+#include "../BlurBehindEffect/blurbehindeffect.h"
 
 #include <QColorDialog>
 #include <QImageReader>

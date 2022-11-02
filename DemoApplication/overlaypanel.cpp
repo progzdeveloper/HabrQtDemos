@@ -1,5 +1,5 @@
 #include "overlaypanel.h"
-#include "blurbehindeffect.h"
+#include "../BlurBehindEffect/blurbehindeffect.h"
 #include <QPainter>
 #include <QBitmap>
 
