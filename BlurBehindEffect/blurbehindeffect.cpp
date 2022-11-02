@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QThread>
+#include <QDebug>
 
 class BlurBehindEffectPrivate
 {
@@ -63,7 +64,7 @@ public:
             qWarning("QtBlurBehindEffect::grabSource: Painter not active");
 
         const bool isGlBlur = blurringMethod_ == BlurBehindEffect::BlurMethod::GLBlur;
-        QPixmap image(_widget->size());
+        QPixmap image(_widget->size() * dpr);
         image.setDevicePixelRatio(dpr);
         image.fill(isGlBlur ? _widget->palette().color(_widget->backgroundRole()) : Qt::transparent);
         _widget->render(&image, {}, {}, QWidget::DrawChildren);
@@ -78,7 +79,7 @@ public:
 
         const QRect bounds = region_.boundingRect();
         const QSize s = bounds.size();
-        QRect r(QPoint(0, 0), s);
+        const QRect r{{}, s};
 
         QTransform transform;
         if (coordSystem_ == Qt::LogicalCoordinates)
@@ -88,7 +89,7 @@ public:
         if (coordSystem_ == Qt::LogicalCoordinates)
             _painter->translate(bounds.topLeft());
 
-        if (!_brush.isOpaque() && !_brush.style() == Qt::NoBrush)
+        if (!_brush.isOpaque() && _brush.style() != Qt::NoBrush)
             _painter->fillRect(r, _brush);
         _painter->setOpacity(blurOpacity_);
         _painter->drawImage(r, _image);
@@ -274,8 +275,9 @@ void BlurBehindEffect::draw(QPainter* _painter)
     if (!d->region_.isEmpty() && d->blurRadius_ > 1)
     {
         const double dpr = pixmap.devicePixelRatioF();
-        const QSize s = (QSizeF(bounds.size()) * (dpr / d->downsamplingFactor_)).toSize();
-        QImage pixmapPart = std::move(pixmap.copy(bounds).scaled(s, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).toImage());
+        const QSize s = (QSizeF(bounds.size()) * dpr / d->downsamplingFactor_).toSize();
+        const QRect r{ bounds.topLeft() * dpr, bounds.size() * dpr };
+        QImage pixmapPart = pixmap.copy(r).scaled(s, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).toImage();
         if (d->sourceImage_ != pixmapPart)
         {
             d->sourceImage_ = pixmapPart;
@@ -293,7 +295,7 @@ void BlurBehindEffect::render(QPainter* _painter)
     if (!d->sourceUpdated_)
         return d->renderImage(_painter, d->blurredImage_, d->backgroundBrush_);
 
-    d->blurredImage_ = std::move(d->blurImage(d->sourceImage_));
+    d->blurredImage_ = d->blurImage(d->sourceImage_);
     d->renderImage(_painter, d->blurredImage_, d->backgroundBrush_);
     d->sourceUpdated_ = false;
 }
@@ -317,12 +319,14 @@ void BlurBehindEffect::render(QPainter* _painter, const QPainterPath& _clipPath)
 
     if (d->sourceUpdated_)
     {
-        d->blurredImage_ = std::move(d->blurImage(d->sourceImage_));
+        d->blurredImage_ = d->blurImage(d->sourceImage_);
         d->sourceUpdated_ = false;
     }
 
-    QImage image = d->blurredImage_.scaled(regionRect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    _painter->setOpacity(d->blurOpacity_);
-    _painter->drawImage(QPointF{}, image, targetBounds);
-}
+    const auto dpr = d->blurredImage_.devicePixelRatioF();
+    const QRectF targetRect{ targetBounds.topLeft() * dpr, targetBounds.size() * dpr };
 
+    QImage image = d->blurredImage_.scaled(regionRect.size() * dpr, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    _painter->setOpacity(d->blurOpacity_);
+    _painter->drawImage(QPointF{}, image, targetRect);
+}
