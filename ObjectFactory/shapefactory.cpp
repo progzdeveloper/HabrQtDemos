@@ -1,5 +1,4 @@
 #include "shapefactory.h"
-#include "shapes.h"
 
 REGISTRATE_SHAPE_CLASS(Circle, 0)
 REGISTRATE_SHAPE_CLASS(Circle, 1, String, int, int, double)

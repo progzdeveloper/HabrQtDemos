@@ -11,7 +11,7 @@
 
 class QMetaObject;
 
-#define MetaTypeId(T) qMetaTypeId<T>
+#define MetaTypeId(T) qMetaTypeId<T>()
 
 #else // Non-Qt version
 #include <vector>

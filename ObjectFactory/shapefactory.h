@@ -1,17 +1,9 @@
 #pragma once
 #include "shapes.h"
-
 #include "objectfactory.h"
 #include "genericfactory.h"
 
-#ifdef QT_VERSION
-using String = QString;
-#else
-using String = std::string;
-#endif
-
 using ShapeFactory = ObjectFactory<String, Shape>;
-// using ShapeFactory = GenericFactory<String, Shape>;
 
 // Mayers singletone
 ShapeFactory& shapeFactory();

@@ -2,6 +2,7 @@
 #include <type_traits>
 
 #ifdef QT_VERSION
+
 // SFINAE Trait that tells is a the Object has a staticMetaObject member
 template <class T>
 class HasQtMetaObject

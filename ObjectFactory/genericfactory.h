@@ -5,6 +5,24 @@
 #include <unordered_map>
 #include <type_traits>
 
+#ifdef QT_VERSION
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 14, 0))
+#include <QString>
+#include <QHash>
+
+namespace std
+{
+    template<>
+    struct hash<QString>
+    {
+        size_t operator()(const QString& s) const noexcept {
+            return qHash(s);
+        }
+    };
+}
+#endif
+#endif
+
 template<
     class _Key,
     class _Base,
